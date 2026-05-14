@@ -112,6 +112,11 @@ td.num, th.num { text-align: right; }
     </div>
   </section>
 
+  <section class="card panel" id="dynamicFilterPanel" style="margin-top:18px; display:none;">
+    <h2>Filter tambahan</h2>
+    <div id="dynamicFilters" class="toolbar" style="margin-top:0; box-shadow:none; border:0; padding:0;"></div>
+  </section>
+
   <section class="kpi-grid">
     <div class="card kpi"><div class="label">Bilangan pesakit</div><div class="value" id="kpiSelected">0</div><div class="sub" id="kpiSelectedSub">Mengikut filter semasa</div></div>
     <div class="card kpi"><div class="label">Jumlah keseluruhan</div><div class="value" id="kpiTotal">0</div><div class="sub">Semua rekod dalam dataset</div></div>
@@ -168,7 +173,7 @@ td.num, th.num { text-align: right; }
       <input id="csvFile" type="file" accept=".csv,text/csv" />
     </div>
     <button id="loadCsvBtn">Load CSV</button>
-    <div class="note" style="grid-column:1/-1">Untuk live dari Google Sheets, publish sheet DATA_MASTER sebagai CSV dan paste URL di sini. Column yang diperlukan: Tarikh, Perkhidmatan, Kategori, Jumlah.</div>
+    <div class="note" style="grid-column:1/-1">Untuk live dari Google Sheets, publish sheet DATA_MASTER sebagai CSV dan paste URL di sini. Dashboard akan cuba baca header secara automatik. Kolum wajib masih perlu ada makna Tarikh, Unit atau Perkhidmatan, dan Jumlah atau Bilangan. Kolum tambahan seperti Jantina, Kategori, atau Klinik akan jadi filter tambahan secara automatik.</div>
   </section>
 
   <div class="footer" id="dataStatus"></div>
@@ -176,29 +181,98 @@ td.num, th.num { text-align: right; }
 
 <script>
 const embeddedData = [{"date":"2026-01-05","unit":"ORTODONTIK","category":"CASH","count":7.0},{"date":"2026-01-05","unit":"ORTODONTIK","category":"EGL","count":5.0},{"date":"2026-01-05","unit":"ORTODONTIK","category":"EP(HQE2)","count":1.0},{"date":"2026-01-05","unit":"ORTODONTIK","category":"N/C","count":0.0},{"date":"2026-01-05","unit":"ORTODONTIK","category":"SURAT SEK/ PESARA/OKU/WE","count":3.0},{"date":"2026-01-05","unit":"ORTODONTIK","category":"WARGA ASING","count":0.0},{"date":"2026-01-05","unit":"PERIODONTIK","category":"EGL","count":1.0},{"date":"2026-01-05","unit":"RESTORATIF","category":"CASH","count":1.0},{"date":"2026-01-05","unit":"RESTORATIF","category":"EGL","count":3.0},{"date":"2026-01-05","unit":"RESTORATIF","category":"N/C","count":3.0},{"date":"2026-01-05","unit":"RESTORATIF","category":"SURAT SEK/ PESARA/OKU/WE","count":1.0},{"date":"2026-01-05","unit":"UPPKA","category":"CASH","count":0.0},{"date":"2026-01-05","unit":"UPPKA","category":"EGL","count":0.0},{"date":"2026-01-05","unit":"UPPKA","category":"EP(HQE2)","count":0.0},{"date":"2026-01-05","unit":"UPPKA","category":"N/C","count":0.0},{"date":"2026-01-05","unit":"UPPKA","category":"SURAT SEK/ PESARA/OKU/WE","count":0.0},{"date":"2026-01-05","unit":"UPPKA","category":"WARGA ASING","count":0.0},{"date":"2026-01-06","unit":"ORTODONTIK","category":"","count":19.0},{"date":"2026-01-06","unit":"PERIODONTIK","category":"","count":1.0},{"date":"2026-01-06","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-01-06","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-07","unit":"ORTODONTIK","category":"","count":14.0},{"date":"2026-01-07","unit":"PERIODONTIK","category":"","count":1.0},{"date":"2026-01-07","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-01-07","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-08","unit":"ORTODONTIK","category":"","count":23.0},{"date":"2026-01-08","unit":"PERIODONTIK","category":"","count":7.0},{"date":"2026-01-08","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-01-08","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-09","unit":"ORTODONTIK","category":"","count":4.0},{"date":"2026-01-09","unit":"PERIODONTIK","category":"","count":4.0},{"date":"2026-01-09","unit":"RESTORATIF","category":"","count":1.0},{"date":"2026-01-09","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-12","unit":"ORTODONTIK","category":"","count":14.0},{"date":"2026-01-12","unit":"PERIODONTIK","category":"","count":5.0},{"date":"2026-01-12","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-01-12","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-13","unit":"ORTODONTIK","category":"","count":22.0},{"date":"2026-01-13","unit":"PERIODONTIK","category":"","count":7.0},{"date":"2026-01-13","unit":"RESTORATIF","category":"","count":1.0},{"date":"2026-01-13","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-14","unit":"ORTODONTIK","category":"","count":20.0},{"date":"2026-01-14","unit":"PERIODONTIK","category":"","count":4.0},{"date":"2026-01-14","unit":"RESTORATIF","category":"","count":0.0},{"date":"2026-01-14","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-15","unit":"ORTODONTIK","category":"","count":21.0},{"date":"2026-01-15","unit":"PERIODONTIK","category":"","count":0.0},{"date":"2026-01-15","unit":"RESTORATIF","category":"","count":2.0},{"date":"2026-01-15","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-16","unit":"ORTODONTIK","category":"","count":6.0},{"date":"2026-01-16","unit":"PERIODONTIK","category":"","count":0.0},{"date":"2026-01-16","unit":"RESTORATIF","category":"","count":0.0},{"date":"2026-01-16","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-19","unit":"ORTODONTIK","category":"","count":28.0},{"date":"2026-01-19","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-01-19","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-01-19","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-20","unit":"ORTODONTIK","category":"","count":27.0},{"date":"2026-01-20","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-01-20","unit":"RESTORATIF","category":"","count":5.0},{"date":"2026-01-20","unit":"UPPKA","category":"","count":2.0},{"date":"2026-01-21","unit":"ORTODONTIK","category":"","count":30.0},{"date":"2026-01-21","unit":"PERIODONTIK","category":"","count":8.0},{"date":"2026-01-21","unit":"RESTORATIF","category":"","count":5.0},{"date":"2026-01-21","unit":"UPPKA","category":"","count":1.0},{"date":"2026-01-22","unit":"ORTODONTIK","category":"","count":31.0},{"date":"2026-01-22","unit":"PERIODONTIK","category":"","count":8.0},{"date":"2026-01-22","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-01-22","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-23","unit":"ORTODONTIK","category":"","count":0.0},{"date":"2026-01-23","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-01-23","unit":"RESTORATIF","category":"","count":7.0},{"date":"2026-01-23","unit":"UPPKA","category":"","count":0.0},{"date":"2026-01-26","unit":"ORTODONTIK","category":"","count":31.0},{"date":"2026-01-26","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-01-26","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-01-26","unit":"UPPKA","category":"","count":2.0},{"date":"2026-01-27","unit":"ORTODONTIK","category":"","count":28.0},{"date":"2026-01-27","unit":"PERIODONTIK","category":"","count":5.0},{"date":"2026-01-27","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-01-27","unit":"UPPKA","category":"","count":3.0},{"date":"2026-01-28","unit":"ORTODONTIK","category":"","count":27.0},{"date":"2026-01-28","unit":"PERIODONTIK","category":"","count":6.0},{"date":"2026-01-28","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-01-28","unit":"UPPKA","category":"","count":2.0},{"date":"2026-01-29","unit":"ORTODONTIK","category":"","count":6.0},{"date":"2026-01-29","unit":"PERIODONTIK","category":"","count":5.0},{"date":"2026-01-29","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-01-29","unit":"UPPKA","category":"","count":2.0},{"date":"2026-01-30","unit":"ORTODONTIK","category":"","count":17.0},{"date":"2026-01-30","unit":"PERIODONTIK","category":"","count":3.0},{"date":"2026-01-30","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-01-30","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-02","unit":"ORTODONTIK","category":"","count":31.0},{"date":"2026-02-02","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-02-02","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-02-02","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-03","unit":"ORTODONTIK","category":"","count":24.0},{"date":"2026-02-03","unit":"PERIODONTIK","category":"","count":7.0},{"date":"2026-02-03","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-02-03","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-04","unit":"ORTODONTIK","category":"","count":17.0},{"date":"2026-02-04","unit":"PERIODONTIK","category":"","count":7.0},{"date":"2026-02-04","unit":"RESTORATIF","category":"","count":5.0},{"date":"2026-02-04","unit":"UPPKA","category":"","count":2.0},{"date":"2026-02-05","unit":"ORTODONTIK","category":"","count":11.0},{"date":"2026-02-05","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-02-05","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-02-05","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-06","unit":"ORTODONTIK","category":"","count":7.0},{"date":"2026-02-06","unit":"PERIODONTIK","category":"","count":5.0},{"date":"2026-02-06","unit":"RESTORATIF","category":"","count":0.0},{"date":"2026-02-06","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-09","unit":"ORTODONTIK","category":"","count":15.0},{"date":"2026-02-09","unit":"PERIODONTIK","category":"","count":11.0},{"date":"2026-02-09","unit":"RESTORATIF","category":"","count":15.0},{"date":"2026-02-09","unit":"UPPKA","category":"","count":2.0},{"date":"2026-02-10","unit":"ORTODONTIK","category":"","count":28.0},{"date":"2026-02-10","unit":"PERIODONTIK","category":"","count":11.0},{"date":"2026-02-10","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-02-10","unit":"UPPKA","category":"","count":2.0},{"date":"2026-02-11","unit":"ORTODONTIK","category":"","count":20.0},{"date":"2026-02-11","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-02-11","unit":"RESTORATIF","category":"","count":17.0},{"date":"2026-02-11","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-12","unit":"ORTODONTIK","category":"","count":8.0},{"date":"2026-02-12","unit":"PERIODONTIK","category":"","count":6.0},{"date":"2026-02-12","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-02-12","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-13","unit":"ORTODONTIK","category":"","count":5.0},{"date":"2026-02-13","unit":"PERIODONTIK","category":"","count":9.0},{"date":"2026-02-13","unit":"RESTORATIF","category":"","count":10.0},{"date":"2026-02-13","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-16","unit":"ORTODONTIK","category":"","count":12.0},{"date":"2026-02-16","unit":"PERIODONTIK","category":"","count":11.0},{"date":"2026-02-16","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-02-16","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-19","unit":"ORTODONTIK","category":"","count":20.0},{"date":"2026-02-19","unit":"PERIODONTIK","category":"","count":11.0},{"date":"2026-02-19","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-02-19","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-20","unit":"ORTODONTIK","category":"","count":7.0},{"date":"2026-02-20","unit":"PERIODONTIK","category":"","count":2.0},{"date":"2026-02-20","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-02-20","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-23","unit":"ORTODONTIK","category":"","count":52.0},{"date":"2026-02-23","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-02-23","unit":"RESTORATIF","category":"","count":15.0},{"date":"2026-02-23","unit":"UPPKA","category":"","count":0.0},{"date":"2026-02-24","unit":"ORTODONTIK","category":"","count":45.0},{"date":"2026-02-24","unit":"PERIODONTIK","category":"","count":8.0},{"date":"2026-02-24","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-02-24","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-25","unit":"ORTODONTIK","category":"","count":42.0},{"date":"2026-02-25","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-02-25","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-02-25","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-26","unit":"ORTODONTIK","category":"","count":51.0},{"date":"2026-02-26","unit":"PERIODONTIK","category":"","count":19.0},{"date":"2026-02-26","unit":"RESTORATIF","category":"","count":0.0},{"date":"2026-02-26","unit":"UPPKA","category":"","count":1.0},{"date":"2026-02-27","unit":"ORTODONTIK","category":"","count":14.0},{"date":"2026-02-27","unit":"PERIODONTIK","category":"","count":8.0},{"date":"2026-02-27","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-02-27","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-02","unit":"ORTODONTIK","category":"","count":47.0},{"date":"2026-03-02","unit":"PERIODONTIK","category":"","count":20.0},{"date":"2026-03-02","unit":"RESTORATIF","category":"","count":14.0},{"date":"2026-03-02","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-03","unit":"ORTODONTIK","category":"","count":47.0},{"date":"2026-03-03","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-03-03","unit":"RESTORATIF","category":"","count":16.0},{"date":"2026-03-03","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-04","unit":"ORTODONTIK","category":"","count":30.0},{"date":"2026-03-04","unit":"PERIODONTIK","category":"","count":1.0},{"date":"2026-03-04","unit":"RESTORATIF","category":"","count":10.0},{"date":"2026-03-04","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-05","unit":"ORTODONTIK","category":"","count":43.0},{"date":"2026-03-05","unit":"PERIODONTIK","category":"","count":0.0},{"date":"2026-03-05","unit":"RESTORATIF","category":"","count":16.0},{"date":"2026-03-05","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-06","unit":"ORTODONTIK","category":"","count":13.0},{"date":"2026-03-06","unit":"PERIODONTIK","category":"","count":1.0},{"date":"2026-03-06","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-03-06","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-09","unit":"ORTODONTIK","category":"","count":43.0},{"date":"2026-03-09","unit":"PERIODONTIK","category":"","count":19.0},{"date":"2026-03-09","unit":"RESTORATIF","category":"","count":18.0},{"date":"2026-03-09","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-10","unit":"ORTODONTIK","category":"","count":55.0},{"date":"2026-03-10","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-03-10","unit":"RESTORATIF","category":"","count":14.0},{"date":"2026-03-10","unit":"UPPKA","category":"","count":4.0},{"date":"2026-03-11","unit":"ORTODONTIK","category":"","count":32.0},{"date":"2026-03-11","unit":"PERIODONTIK","category":"","count":7.0},{"date":"2026-03-11","unit":"RESTORATIF","category":"","count":17.0},{"date":"2026-03-11","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-12","unit":"ORTODONTIK","category":"","count":49.0},{"date":"2026-03-12","unit":"PERIODONTIK","category":"","count":16.0},{"date":"2026-03-12","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-03-12","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-13","unit":"ORTODONTIK","category":"","count":13.0},{"date":"2026-03-13","unit":"PERIODONTIK","category":"","count":15.0},{"date":"2026-03-13","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-03-13","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-16","unit":"ORTODONTIK","category":"","count":41.0},{"date":"2026-03-16","unit":"PERIODONTIK","category":"","count":22.0},{"date":"2026-03-16","unit":"RESTORATIF","category":"","count":19.0},{"date":"2026-03-16","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-17","unit":"ORTODONTIK","category":"","count":42.0},{"date":"2026-03-17","unit":"PERIODONTIK","category":"","count":18.0},{"date":"2026-03-17","unit":"RESTORATIF","category":"","count":16.0},{"date":"2026-03-17","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-18","unit":"ORTODONTIK","category":"","count":46.0},{"date":"2026-03-18","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-03-18","unit":"RESTORATIF","category":"","count":14.0},{"date":"2026-03-18","unit":"UPPKA","category":"","count":1.0},{"date":"2026-03-19","unit":"ORTODONTIK","category":"","count":37.0},{"date":"2026-03-19","unit":"PERIODONTIK","category":"","count":22.0},{"date":"2026-03-19","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-03-19","unit":"UPPKA","category":"","count":3.0},{"date":"2026-03-24","unit":"ORTODONTIK","category":"","count":34.0},{"date":"2026-03-24","unit":"PERIODONTIK","category":"","count":17.0},{"date":"2026-03-24","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-03-24","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-25","unit":"ORTODONTIK","category":"","count":36.0},{"date":"2026-03-25","unit":"PERIODONTIK","category":"","count":9.0},{"date":"2026-03-25","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-03-25","unit":"UPPKA","category":"","count":2.0},{"date":"2026-03-26","unit":"ORTODONTIK","category":"","count":25.0},{"date":"2026-03-26","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-03-26","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-03-26","unit":"UPPKA","category":"","count":0.0},{"date":"2026-03-27","unit":"ORTODONTIK","category":"","count":22.0},{"date":"2026-03-27","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-03-27","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-03-27","unit":"UPPKA","category":"","count":3.0},{"date":"2026-03-31","unit":"ORTODONTIK","category":"","count":45.0},{"date":"2026-03-31","unit":"PERIODONTIK","category":"","count":9.0},{"date":"2026-03-31","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-03-31","unit":"UPPKA","category":"","count":2.0},{"date":"2026-04-01","unit":"ORTODONTIK","category":"","count":45.0},{"date":"2026-04-01","unit":"PERIODONTIK","category":"","count":5.0},{"date":"2026-04-01","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-04-01","unit":"UPPKA","category":"","count":1.0},{"date":"2026-04-02","unit":"ORTODONTIK","category":"","count":10.0},{"date":"2026-04-02","unit":"PERIODONTIK","category":"","count":17.0},{"date":"2026-04-02","unit":"RESTORATIF","category":"","count":5.0},{"date":"2026-04-02","unit":"UPPKA","category":"","count":2.0},{"date":"2026-04-06","unit":"ORTODONTIK","category":"","count":14.0},{"date":"2026-04-06","unit":"PERIODONTIK","category":"","count":18.0},{"date":"2026-04-06","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-04-06","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-07","unit":"ORTODONTIK","category":"","count":19.0},{"date":"2026-04-07","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-04-07","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-04-07","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-08","unit":"ORTODONTIK","category":"","count":19.0},{"date":"2026-04-08","unit":"PERIODONTIK","category":"","count":9.0},{"date":"2026-04-08","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-04-08","unit":"UPPKA","category":"","count":1.0},{"date":"2026-04-09","unit":"ORTODONTIK","category":"","count":58.0},{"date":"2026-04-09","unit":"PERIODONTIK","category":"","count":27.0},{"date":"2026-04-09","unit":"RESTORATIF","category":"","count":8.0},{"date":"2026-04-09","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-10","unit":"ORTODONTIK","category":"","count":15.0},{"date":"2026-04-10","unit":"PERIODONTIK","category":"","count":0.0},{"date":"2026-04-10","unit":"RESTORATIF","category":"","count":16.0},{"date":"2026-04-10","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-13","unit":"ORTODONTIK","category":"","count":38.0},{"date":"2026-04-13","unit":"PERIODONTIK","category":"","count":17.0},{"date":"2026-04-13","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-04-13","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-14","unit":"ORTODONTIK","category":"","count":35.0},{"date":"2026-04-14","unit":"PERIODONTIK","category":"","count":14.0},{"date":"2026-04-14","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-04-14","unit":"UPPKA","category":"","count":1.0},{"date":"2026-04-15","unit":"ORTODONTIK","category":"","count":38.0},{"date":"2026-04-15","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-04-15","unit":"RESTORATIF","category":"","count":10.0},{"date":"2026-04-15","unit":"UPPKA","category":"","count":2.0},{"date":"2026-04-16","unit":"ORTODONTIK","category":"","count":34.0},{"date":"2026-04-16","unit":"PERIODONTIK","category":"","count":21.0},{"date":"2026-04-16","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-04-16","unit":"UPPKA","category":"","count":2.0},{"date":"2026-04-17","unit":"ORTODONTIK","category":"","count":14.0},{"date":"2026-04-17","unit":"PERIODONTIK","category":"","count":12.0},{"date":"2026-04-17","unit":"RESTORATIF","category":"","count":4.0},{"date":"2026-04-17","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-20","unit":"ORTODONTIK","category":"","count":49.0},{"date":"2026-04-20","unit":"PERIODONTIK","category":"","count":19.0},{"date":"2026-04-20","unit":"RESTORATIF","category":"","count":9.0},{"date":"2026-04-20","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-21","unit":"ORTODONTIK","category":"","count":40.0},{"date":"2026-04-21","unit":"PERIODONTIK","category":"","count":15.0},{"date":"2026-04-21","unit":"RESTORATIF","category":"","count":17.0},{"date":"2026-04-21","unit":"UPPKA","category":"","count":1.0},{"date":"2026-04-22","unit":"ORTODONTIK","category":"","count":34.0},{"date":"2026-04-22","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-04-22","unit":"RESTORATIF","category":"","count":13.0},{"date":"2026-04-22","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-23","unit":"ORTODONTIK","category":"","count":47.0},{"date":"2026-04-23","unit":"PERIODONTIK","category":"","count":22.0},{"date":"2026-04-23","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-04-23","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-24","unit":"ORTODONTIK","category":"","count":21.0},{"date":"2026-04-24","unit":"PERIODONTIK","category":"","count":15.0},{"date":"2026-04-24","unit":"RESTORATIF","category":"","count":3.0},{"date":"2026-04-24","unit":"UPPKA","category":"","count":0.0},{"date":"2026-04-27","unit":"ORTODONTIK","category":"","count":50.0},{"date":"2026-04-27","unit":"PERIODONTIK","category":"","count":15.0},{"date":"2026-04-27","unit":"RESTORATIF","category":"","count":5.0},{"date":"2026-04-27","unit":"UPPKA","category":"","count":1.0},{"date":"2026-04-28","unit":"ORTODONTIK","category":"","count":42.0},{"date":"2026-04-28","unit":"PERIODONTIK","category":"","count":11.0},{"date":"2026-04-28","unit":"RESTORATIF","category":"","count":10.0},{"date":"2026-04-28","unit":"UPPKA","category":"","count":2.0},{"date":"2026-04-29","unit":"ORTODONTIK","category":"","count":18.0},{"date":"2026-04-29","unit":"PERIODONTIK","category":"","count":14.0},{"date":"2026-04-29","unit":"RESTORATIF","category":"","count":12.0},{"date":"2026-04-29","unit":"UPPKA","category":"","count":5.0},{"date":"2026-04-30","unit":"ORTODONTIK","category":"","count":28.0},{"date":"2026-04-30","unit":"PERIODONTIK","category":"","count":22.0},{"date":"2026-04-30","unit":"RESTORATIF","category":"","count":3.0},{"date":"2026-04-30","unit":"UPPKA","category":"","count":4.0},{"date":"2026-05-04","unit":"ORTODONTIK","category":"","count":31.0},{"date":"2026-05-04","unit":"PERIODONTIK","category":"","count":20.0},{"date":"2026-05-04","unit":"RESTORATIF","category":"","count":16.0},{"date":"2026-05-04","unit":"UPPKA","category":"","count":2.0},{"date":"2026-05-05","unit":"ORTODONTIK","category":"","count":27.0},{"date":"2026-05-05","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-05-05","unit":"RESTORATIF","category":"","count":17.0},{"date":"2026-05-05","unit":"UPPKA","category":"","count":1.0},{"date":"2026-05-06","unit":"ORTODONTIK","category":"","count":30.0},{"date":"2026-05-06","unit":"PERIODONTIK","category":"","count":9.0},{"date":"2026-05-06","unit":"RESTORATIF","category":"","count":18.0},{"date":"2026-05-06","unit":"UPPKA","category":"","count":0.0},{"date":"2026-05-07","unit":"ORTODONTIK","category":"","count":50.0},{"date":"2026-05-07","unit":"PERIODONTIK","category":"","count":13.0},{"date":"2026-05-07","unit":"RESTORATIF","category":"","count":13.0},{"date":"2026-05-07","unit":"UPPKA","category":"","count":0.0},{"date":"2026-05-08","unit":"ORTODONTIK","category":"","count":5.0},{"date":"2026-05-08","unit":"PERIODONTIK","category":"","count":6.0},{"date":"2026-05-08","unit":"RESTORATIF","category":"","count":7.0},{"date":"2026-05-08","unit":"UPPKA","category":"","count":0.0},{"date":"2026-05-11","unit":"ORTODONTIK","category":"","count":37.0},{"date":"2026-05-11","unit":"PERIODONTIK","category":"","count":18.0},{"date":"2026-05-11","unit":"RESTORATIF","category":"","count":6.0},{"date":"2026-05-11","unit":"UPPKA","category":"","count":3.0},{"date":"2026-05-12","unit":"ORTODONTIK","category":"","count":23.0},{"date":"2026-05-12","unit":"PERIODONTIK","category":"","count":14.0},{"date":"2026-05-12","unit":"RESTORATIF","category":"","count":14.0},{"date":"2026-05-12","unit":"UPPKA","category":"","count":0.0},{"date":"2026-05-13","unit":"ORTODONTIK","category":"","count":16.0},{"date":"2026-05-13","unit":"PERIODONTIK","category":"","count":10.0},{"date":"2026-05-13","unit":"RESTORATIF","category":"","count":11.0},{"date":"2026-05-13","unit":"UPPKA","category":"","count":0.0}];
-let rawData = embeddedData.map(d => ({...d, count: Number(d.count)||0}));
+let rawData = embeddedData.map(d => ({...d, count: Number(d.count)||0, extra: d.extra || {}}));
+let schema = { date: 'date', unit: 'unit', count: 'count', extras: [] };
 const DEFAULT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTwcxgFK5sc-AavRqe251jUzqx3QRZkL4w3XBVw9icr1OQrokzAztI55GubRj7wrw/pub?gid=1099302971&single=true&output=csv';
-const unitsOrder = ['ORTODONTIK','PERIODONTIK','RESTORATIF','UPPKA'];
+const preferredUnitsOrder = ['ORTODONTIK','PERIODONTIK','RESTORATIF','UPPKA'];
 const monthNames = ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'];
-const colors = ['#2f75b5','#70ad47','#ed7d31','#8064a2','#a5a5a5'];
+const colors = ['#2f75b5','#70ad47','#ed7d31','#8064a2','#a5a5a5','#0f766e','#b45309','#7c3aed','#0891b2'];
 
 function fmt(n) { return Math.round(Number(n)||0).toLocaleString('en-MY'); }
 function fmt1(n) { return (Number(n)||0).toLocaleString('en-MY', {minimumFractionDigits:1, maximumFractionDigits:1}); }
-function monthKey(dateStr) { return dateStr.slice(0,7); }
+function monthKey(dateStr) { return String(dateStr || '').slice(0,7); }
 function monthLabel(key) { const [y,m] = key.split('-').map(Number); return monthNames[m-1] + ' ' + y; }
-function unique(arr) { return [...new Set(arr)].filter(Boolean); }
+function unique(arr) { return [...new Set(arr)].filter(v => v !== undefined && v !== null && String(v).trim() !== ''); }
 function byDate(a,b) { return a.localeCompare(b); }
+function cleanHeader(s) { return String(s || '').trim().replace(/^\uFEFF/, ''); }
+function normalKey(s) { return cleanHeader(s).toLowerCase().replace(/[^a-z0-9\u00c0-\u024f]+/g, ''); }
+function titleCase(s) { return cleanHeader(s).replace(/_/g,' ').replace(/\s+/g,' ').replace(/\b\w/g, c => c.toUpperCase()); }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function sortUnits(a,b) {
+  const ia = preferredUnitsOrder.indexOf(a);
+  const ib = preferredUnitsOrder.indexOf(b);
+  if (ia >= 0 && ib >= 0) return ia - ib;
+  if (ia >= 0) return -1;
+  if (ib >= 0) return 1;
+  return String(a).localeCompare(String(b));
+}
+
+function classifyHeader(header) {
+  const h = normalKey(header);
+  if (['tarikh','date','dates','hari','day'].includes(h) || h.includes('tarikh') || h.endsWith('date')) return 'date';
+  if (['perkhidmatan','unit','service','services','klinik','clinic','bahagian','department','jabatan'].includes(h) || h.includes('perkhidmatan')) return 'unit';
+  if (['jumlah','bilangan','count','total','pesakit','patient','patients','attendance','kedatangan'].includes(h) || h.includes('jumlah') || h.includes('bilangan')) return 'count';
+  return 'extra';
+}
+
+function parseDateValue(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
+    const [y,m,d] = s.split('-');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+    const [d,m,y] = s.split('/');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(s)) {
+    const [d,m,y] = s.split('-');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  const parsed = new Date(s);
+  if (!isNaN(parsed)) return parsed.toISOString().slice(0,10);
+  return s;
+}
+
+function parseNumberValue(raw) {
+  const n = Number(String(raw || '0').replace(/,/g,'').trim());
+  return Number.isFinite(n) ? n : 0;
+}
 
 function setupFilters() {
   const monthSelect = document.getElementById('monthFilter');
   const unitSelect = document.getElementById('unitFilter');
   const months = unique(rawData.map(d => monthKey(d.date))).sort();
-  const units = unique(rawData.map(d => d.unit)).sort((a,b) => unitsOrder.indexOf(a)-unitsOrder.indexOf(b));
+  const units = unique(rawData.map(d => d.unit)).sort(sortUnits);
   monthSelect.innerHTML = '<option value="ALL">Semua bulan</option>' + months.map(m => `<option value="${m}">${monthLabel(m)}</option>`).join('');
-  unitSelect.innerHTML = '<option value="ALL">Semua unit</option>' + units.map(u => `<option value="${u}">${u}</option>`).join('');
-  const dates = rawData.map(d => d.date).sort();
+  unitSelect.innerHTML = '<option value="ALL">Semua unit</option>' + units.map(u => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+  const dates = rawData.map(d => d.date).filter(Boolean).sort();
   document.getElementById('dateFrom').value = dates[0] || '';
   document.getElementById('dateTo').value = dates[dates.length-1] || '';
+  setupDynamicFilters();
+}
+
+function setupDynamicFilters() {
+  const panel = document.getElementById('dynamicFilterPanel');
+  const holder = document.getElementById('dynamicFilters');
+  const extras = schema.extras || [];
+  holder.innerHTML = '';
+  if (!extras.length) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+  extras.forEach(col => {
+    const values = unique(rawData.map(d => d.extra && d.extra[col])).sort((a,b)=>String(a).localeCompare(String(b)));
+    if (!values.length) return;
+    const id = 'filter_' + normalKey(col);
+    const div = document.createElement('div');
+    div.className = 'field';
+    div.innerHTML = `<label for="${id}">${escapeHtml(titleCase(col))}</label><select id="${id}" data-extra="${escapeHtml(col)}"><option value="ALL">Semua</option>${values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')}</select>`;
+    holder.appendChild(div);
+  });
+  holder.querySelectorAll('select[data-extra]').forEach(sel => sel.addEventListener('change', updateDashboard));
 }
 
 function getFilteredData() {
@@ -206,11 +280,13 @@ function getFilteredData() {
   const unit = document.getElementById('unitFilter').value;
   const from = document.getElementById('dateFrom').value;
   const to = document.getElementById('dateTo').value;
+  const extraFilters = [...document.querySelectorAll('#dynamicFilters select[data-extra]')].map(sel => ({col: sel.dataset.extra, value: sel.value}));
   return rawData.filter(d =>
     (month === 'ALL' || monthKey(d.date) === month) &&
     (unit === 'ALL' || d.unit === unit) &&
     (!from || d.date >= from) &&
-    (!to || d.date <= to)
+    (!to || d.date <= to) &&
+    extraFilters.every(f => f.value === 'ALL' || String((d.extra || {})[f.col] || '') === f.value)
   );
 }
 
@@ -220,7 +296,6 @@ function groupSum(data, keyFn) {
   return m;
 }
 function activeDays(data) { return unique(data.filter(d => d.count > 0).map(d => d.date)).length; }
-function allDays(data) { return unique(data.map(d => d.date)).length; }
 
 function drawChart(canvasId, labels, series, options={}) {
   const canvas = document.getElementById(canvasId);
@@ -299,14 +374,14 @@ function updateDashboard() {
   const dailyLabels = [...daily.keys()].sort(byDate);
   drawChart('dailyChart', dailyLabels.map(d=>d.slice(5)), [{name:'Pesakit', values:dailyLabels.map(d=>daily.get(d)), color:'#2f75b5'}]);
 
-  const unitLabels = unitsOrder.filter(u=>byUnit.has(u)).concat([...byUnit.keys()].filter(u=>!unitsOrder.includes(u)));
+  const unitLabels = unique([...preferredUnitsOrder.filter(u=>byUnit.has(u)), ...[...byUnit.keys()].filter(u=>!preferredUnitsOrder.includes(u))]);
   drawChart('unitChart', unitLabels, [{name:'Jumlah', values:unitLabels.map(u=>byUnit.get(u)||0), color:'#70ad47'}], {type:'bar'});
 
   const monthly = groupSum(data, d=>monthKey(d.date));
   const monthLabels = [...monthly.keys()].sort();
   drawChart('monthlyChart', monthLabels.map(monthLabel), [{name:'Jumlah', values:monthLabels.map(m=>monthly.get(m)), color:'#ed7d31'}], {type:'bar'});
 
-  const units = unitsOrder.filter(u => rawData.some(d=>d.unit===u));
+  const units = unique(rawData.map(d=>d.unit)).sort(sortUnits);
   const monthlySeries = units.map((u,i) => {
     const vals = monthLabels.map(m => data.filter(d=>d.unit===u && monthKey(d.date)===m).reduce((a,d)=>a+d.count,0));
     return {name:u, values:vals, color:colors[i%colors.length]};
@@ -320,7 +395,7 @@ function updateDashboard() {
     const unitDays = activeDays(data.filter(d=>d.unit===u));
     const avg = unitDays ? sum/unitDays : 0;
     const share = sum/totalForShare*100;
-    return `<tr><td><span class="badge">${u}</span></td><td class="num">${fmt(sum)}</td><td class="num">${fmt1(avg)}</td><td class="num">${fmt1(share)}%</td></tr>`;
+    return `<tr><td><span class="badge">${escapeHtml(u)}</span></td><td class="num">${fmt(sum)}</td><td class="num">${fmt1(avg)}</td><td class="num">${fmt1(share)}%</td></tr>`;
   }).join('');
 
   const mom = document.getElementById('momTable');
@@ -334,8 +409,9 @@ function updateDashboard() {
     return html;
   }).join('');
 
-  const dates = rawData.map(d=>d.date).sort();
-  document.getElementById('dataStatus').textContent = `Dataset aktif: ${rawData.length} rekod. Tarikh: ${dates[0] || '-'} hingga ${dates[dates.length-1] || '-'}.`;
+  const dates = rawData.map(d=>d.date).filter(Boolean).sort();
+  const extrasText = (schema.extras || []).length ? ` Filter tambahan: ${(schema.extras || []).join(', ')}.` : '';
+  document.getElementById('dataStatus').textContent = `Dataset aktif: ${rawData.length} rekod. Tarikh: ${dates[0] || '-'} hingga ${dates[dates.length-1] || '-'}.${extrasText}`;
 }
 
 function parseCSV(text) {
@@ -343,53 +419,47 @@ function parseCSV(text) {
   let row = [];
   let cur = '';
   let quote = false;
-
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     const next = text[i + 1];
-
-    if (ch === '"' && quote && next === '"') {
-      cur += '"';
-      i++;
-    } else if (ch === '"') {
-      quote = !quote;
-    } else if (ch === ',' && !quote) {
-      row.push(cur);
-      cur = '';
-    } else if ((ch === '\n' || ch === '\r') && !quote) {
-      if (cur || row.length) {
-        row.push(cur);
-        rows.push(row);
-        row = [];
-        cur = '';
-      }
+    if (ch === '"' && quote && next === '"') { cur += '"'; i++; }
+    else if (ch === '"') quote = !quote;
+    else if (ch === ',' && !quote) { row.push(cur); cur = ''; }
+    else if ((ch === '\n' || ch === '\r') && !quote) {
+      if (cur || row.length) { row.push(cur); rows.push(row); row = []; cur = ''; }
       if (ch === '\r' && next === '\n') i++;
-    } else {
-      cur += ch;
-    }
+    } else cur += ch;
   }
-
-  if (cur || row.length) {
-    row.push(cur);
-    rows.push(row);
-  }
+  if (cur || row.length) { row.push(cur); rows.push(row); }
   return rows;
 }
 
 function normaliseCSV(text) {
   const rows = parseCSV(text).filter(r=>r.some(c=>String(c).trim()!==''));
   if (!rows.length) return [];
-  const headers = rows[0].map(h=>String(h).trim().toLowerCase());
-  const idx = nameList => headers.findIndex(h => nameList.some(n => h.includes(n)));
-  const iDate = idx(['tarikh','date']);
-  const iUnit = idx(['perkhidmatan','unit','service']);
-  const iCat = idx(['kategori','category']);
-  const iCount = idx(['jumlah','bilangan','count']);
+  const headers = rows[0].map(cleanHeader);
+  const mapped = { date: -1, unit: -1, count: -1, extras: [] };
+  headers.forEach((h, i) => {
+    const type = classifyHeader(h);
+    if (type === 'date' && mapped.date < 0) mapped.date = i;
+    else if (type === 'unit' && mapped.unit < 0) mapped.unit = i;
+    else if (type === 'count' && mapped.count < 0) mapped.count = i;
+    else mapped.extras.push({ index: i, name: h || `Kolum ${i+1}` });
+  });
+  if (mapped.date < 0 || mapped.unit < 0 || mapped.count < 0) {
+    alert('CSV tidak dapat dibaca. Dashboard perlu kenal pasti kolum Tarikh, Unit atau Perkhidmatan, dan Jumlah atau Bilangan. Header dikesan: ' + headers.join(', '));
+    return [];
+  }
+  schema = { date: headers[mapped.date], unit: headers[mapped.unit], count: headers[mapped.count], extras: mapped.extras.map(x => x.name) };
   return rows.slice(1).map(r => {
-    const rawDate = String(r[iDate]||'').trim();
-    let date = rawDate;
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDate)) { const [d,m,y]=rawDate.split('/'); date=`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; }
-    return {date, unit:String(r[iUnit]||'').trim().toUpperCase(), category:String(r[iCat]||'').trim().toUpperCase(), count:Number(String(r[iCount]||'0').replace(/,/g,''))||0};
+    const extra = {};
+    mapped.extras.forEach(x => { extra[x.name] = String(r[x.index] || '').trim(); });
+    return {
+      date: parseDateValue(r[mapped.date]),
+      unit: String(r[mapped.unit] || '').trim().toUpperCase(),
+      count: parseNumberValue(r[mapped.count]),
+      extra
+    };
   }).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d.date) && d.unit);
 }
 async function loadCSV() {
@@ -405,7 +475,7 @@ async function loadCSV() {
   else return;
   const next = normaliseCSV(text);
   if (next.length) { rawData = next; setupFilters(); updateDashboard(); }
-  else alert('CSV tidak dapat dibaca. Pastikan column Tarikh, Perkhidmatan, Kategori, Jumlah wujud.');
+  else alert('CSV tidak dapat dibaca. Semak header wajib dan format tarikh.');
 }
 
 ['monthFilter','unitFilter','dateFrom','dateTo'].forEach(id => document.getElementById(id).addEventListener('change', updateDashboard));
