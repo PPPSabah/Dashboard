@@ -339,24 +339,43 @@ function updateDashboard() {
 }
 
 function parseCSV(text) {
-  const rows = []; let row = [], cur = '', quote = false;
-  for (let i=0;i<text.length;i++) {
-    const ch = text[i], next = text[i+1];
-    if (ch === '"' && quote && next === '"') { cur += '"'; i++; }
-    else if (ch === '"') quote = !quote;
-    else if (ch === ',' && !quote) { row.push(cur); cur=''; }
-    else if ((ch === '
-' || ch === '
-') && !quote) {
-      if (cur || row.length) { row.push(cur); rows.push(row); row=[]; cur=''; }
-      if (ch === '
-' && next === '
-') i++;
-    } else cur += ch;
+  const rows = [];
+  let row = [];
+  let cur = '';
+  let quote = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"' && quote && next === '"') {
+      cur += '"';
+      i++;
+    } else if (ch === '"') {
+      quote = !quote;
+    } else if (ch === ',' && !quote) {
+      row.push(cur);
+      cur = '';
+    } else if ((ch === '\n' || ch === '\r') && !quote) {
+      if (cur || row.length) {
+        row.push(cur);
+        rows.push(row);
+        row = [];
+        cur = '';
+      }
+      if (ch === '\r' && next === '\n') i++;
+    } else {
+      cur += ch;
+    }
   }
-  if (cur || row.length) { row.push(cur); rows.push(row); }
+
+  if (cur || row.length) {
+    row.push(cur);
+    rows.push(row);
+  }
   return rows;
 }
+
 function normaliseCSV(text) {
   const rows = parseCSV(text).filter(r=>r.some(c=>String(c).trim()!==''));
   if (!rows.length) return [];
@@ -378,7 +397,11 @@ async function loadCSV() {
   const file = document.getElementById('csvFile').files[0];
   let text = '';
   if (file) text = await file.text();
-  else if (url) text = await fetch(url).then(r => r.text());
+  else if (url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('CSV tidak dapat dicapai: ' + response.status);
+    text = await response.text();
+  }
   else return;
   const next = normaliseCSV(text);
   if (next.length) { rawData = next; setupFilters(); updateDashboard(); }
